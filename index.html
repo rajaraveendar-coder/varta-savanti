@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>వార్తా సవంతి</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--primary:#c0392b;--primary-dark:#96281b;--bg:#fdf6f0;--surface:#fff;--text-primary:#1a1a1a;--text-secondary:#555;--text-muted:#888;--border:#e8e0d8;--badge:#3b82f6}
+    html,body{height:100%;font-family:'Noto Sans Telugu',sans-serif;background:var(--bg)}
+    .app-container{max-width:430px;margin:0 auto;height:100vh;display:flex;flex-direction:column;background:var(--bg);position:relative}
+    .header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--bg);z-index:10}
+    .header-menu-btn{background:none;border:none;cursor:pointer;padding:4px;display:flex;flex-direction:column;gap:5px}
+    .header-menu-btn span{display:block;width:22px;height:2px;background:var(--primary);border-radius:2px}
+    .header-title{font-size:21px;font-weight:700;color:var(--primary);flex:1;text-align:center}
+    .header-profile-btn{background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center}
+    .header-profile-btn svg{width:26px;height:26px;stroke:var(--primary)}
+    .main-content{flex:1;overflow-y:auto;overflow-x:hidden}
+    .hero-section{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden}
+    .hero-image{width:100%;height:100%;object-fit:cover;display:block}
+    .hero-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 30%,rgba(0,0,0,.3) 60%,rgba(0,0,0,.75) 100%)}
+    .hero-headline{position:absolute;bottom:16px;left:16px;right:16px;color:#fff;font-size:17px;font-weight:700;line-height:1.4;text-shadow:0 1px 4px rgba(0,0,0,.5)}
+    .article-section{background:var(--surface);padding:16px}
+    .article-meta{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+    .category-badge{background:var(--badge);color:#fff;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+    .article-time{font-size:12px;color:var(--text-muted)}
+    .article-body{font-size:15px;line-height:1.8;color:var(--text-primary);margin-bottom:16px}
+    .read-more-link{display:inline-flex;align-items:center;gap:4px;color:var(--primary);font-size:14px;font-weight:600;text-decoration:none;margin-bottom:20px;cursor:pointer}
+    .read-more-link::after{content:'↗';font-size:12px}
+    .divider{height:1px;background:var(--border);margin:0 -16px 16px}
+    .section-title{font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:14px}
+    .news-card{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer}
+    .news-card:last-child{border-bottom:none}
+    .news-card-image{width:90px;height:70px;border-radius:8px;object-fit:cover;flex-shrink:0}
+    .news-card-content{flex:1;display:flex;flex-direction:column;gap:4px}
+    .news-card-title{font-size:14px;font-weight:600;line-height:1.4;color:var(--text-primary);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .news-card-meta{display:flex;align-items:center;gap:6px;margin-top:2px}
+    .news-card-badge{background:var(--badge);color:#fff;font-size:10px;padding:2px 7px;border-radius:10px}
+    .news-card-time{font-size:11px;color:var(--text-muted)}
+    .action-bar{display:flex;align-items:center;padding:10px 16px;background:var(--surface);border-top:1px solid var(--border)}
+    .action-btn{display:flex;align-items:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px 8px;color:var(--text-secondary);font-size:12px;font-family:inherit;border-radius:6px}
+    .action-btn svg{width:18px;height:18px;stroke:var(--text-secondary)}
+    .action-bar-spacer{flex:1}
+    .subscribe-btn{background:var(--primary);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer}
+    .bottom-nav{display:flex;align-items:center;justify-content:space-around;background:var(--surface);border-top:1px solid var(--border);padding:8px 0 10px}
+    .nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:4px 12px;background:none;border:none;font-family:inherit}
+    .nav-item-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center}
+    .nav-item-icon svg{width:22px;height:22px;stroke:var(--text-muted);fill:none;stroke-width:1.5}
+    .nav-item.active .nav-item-icon{background:var(--primary)}
+    .nav-item.active .nav-item-icon svg{stroke:#fff}
+    .nav-item-label{font-size:10px;color:var(--text-muted)}
+    .nav-item.active .nav-item-label{color:var(--primary);font-weight:600}
+    .drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;opacity:0;pointer-events:none;transition:opacity .3s}
+    .drawer-overlay.open{opacity:1;pointer-events:all}
+    .drawer{position:fixed;top:0;left:0;bottom:0;width:min(80vw,300px);background:var(--surface);z-index:201;transform:translateX(-100%);transition:transform .3s ease;display:flex;flex-direction:column}
+    .drawer.open{transform:translateX(0)}
+    .drawer-header{padding:28px 20px 16px;border-bottom:1px solid var(--border)}
+    .drawer-title{font-size:20px;font-weight:700;color:var(--primary)}
+    .drawer-subtitle{font-size:12px;color:var(--text-muted);margin-top:2px}
+    .drawer-nav{flex:1;padding:12px 0;overflow-y:auto}
+    .drawer-nav-item{display:flex;align-items:center;gap:14px;padding:14px 20px;cursor:pointer;font-size:15px;color:var(--text-primary)}
+    .drawer-nav-item:hover{background:#f5f0ec}
+    .drawer-nav-item svg{width:20px;height:20px;stroke:var(--primary);flex-shrink:0}
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+  <div class="drawer" id="drawer">
+    <div class="drawer-header">
+      <div class="drawer-title">వార్తా సవంతి</div>
+      <div class="drawer-subtitle">Telugu News Platform</div>
+    </div>
+    <nav class="drawer-nav">
+      <div class="drawer-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>హోమ్</div>
+      <div class="drawer-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke="currentColor"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>వెతకండి</div>
+      <div class="drawer-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke="currentColor"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>రాజకీయాలు</div>
+      <div class="drawer-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke="currentColor"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>వ్యాపారం</div>
+      <div class="drawer-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>క్రీడలు</div>
+      <div class="drawer-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke="currentColor"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>వినోదం</div>
+      <div class="drawer-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>అంతర్జాతీయం</div>
+    </nav>
+  </div>
+  <header class="header">
+    <button class="header-menu-btn" id="menuBtn"><span></span><span></span><span></span></button>
+    <h1 class="header-title">వార్తా సవంతి</h1>
+    <button class="header-profile-btn"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button>
+  </header>
+  <main class="main-content">
+    <section class="hero-section">
+      <img class="hero-image" src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80" alt="Stock Market">
+      <div class="hero-overlay"></div>
+      <div class="hero-headline">స్టాక్ మార్కెట్లో భారీ లాభాలు: సరికొత్త రికార్డులను సృష్టించిన సెన్సెక్స్</div>
+    </section>
+    <article class="article-section">
+      <div class="article-meta"><span class="category-badge">బిజినెస్</span><span class="article-time">3 గంటల క్రితం</span></div>
+      <p class="article-body">దేశీయ స్టాక్ మార్కెట్లు నేడు సరికొత్త చరిత్రను సృష్టించాయి. అంతర్జాతీయ సానుకూల పవనాలతో పాటు, దేశీయంగా వృద్ధి గణాంకాలు మెరుగుపడటంతో ఇన్వెస్టర్లు కొనుగోలు వైపు మొగ్గు చూపారు. సెన్సెక్స్ ఏకంగా 1200 పాయింట్లు పెరిగి 75,000 మార్కును తాకింది. నిఫ్టీ కూడా 23,000 పాయింట్ల వద్ద ఫ్లోరసడింది.</p>
+      <a class="read-more-link">మరిన్ని వివరాలు చదవండి</a>
+      <div class="divider"></div>
+      <div class="section-title">మరిన్ని వార్తలు</div>
+      <div class="news-card">
+        <img class="news-card-image" src="https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=200&q=70" alt="">
+        <div class="news-card-content">
+          <div class="news-card-title">రాజ్యసభ ఎన్నికలు: మూడు రాష్ట్రాల్లో ప్రచారం ముమ్మరం</div>
+          <div class="news-card-meta"><span class="news-card-badge">రాజకీయం</span><span class="news-card-time">5 గంటల క్రితం</span></div>
+        </div>
+      </div>
+      <div class="news-card">
+        <img class="news-card-image" src="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=200&q=70" alt="">
+        <div class="news-card-content">
+          <div class="news-card-title">టీమ్ ఇండియా: తొలి టెస్ట్ లో భారత్ ఘన విజయం నమోదు</div>
+          <div class="news-card-meta"><span class="news-card-badge" style="background:#16a34a">క్రీడలు</span><span class="news-card-time">7 గంటల క్రితం</span></div>
+        </div>
+      </div>
+      <div class="news-card">
+        <img class="news-card-image" src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=200&q=70" alt="">
+        <div class="news-card-content">
+          <div class="news-card-title">AI విప్లవం: భారతదేశంలో 50 లక్షల ఉద్యోగాలు సృష్టించే అవకాశం</div>
+          <div class="news-card-meta"><span class="news-card-badge" style="background:#7c3aed">సాంకేతికత</span><span class="news-card-time">8 గంటల క్రితం</span></div>
+        </div>
+      </div>
+      <div class="news-card">
+        <img class="news-card-image" src="https://images.unsplash.com/photo-1485846234645-a62644f84728?w=200&q=70" alt="">
+        <div class="news-card-content">
+          <div class="news-card-title">తెలుగు సినిమా: ప్రభాస్ చిత్రం 500 కోట్ల వసూళ్లు నమోదు</div>
+          <div class="news-card-meta"><span class="news-card-badge" style="background:#ea580c">వినోదం</span><span class="news-card-time">10 గంటల క్రితం</span></div>
+        </div>
+      </div>
+    </article>
+  </main>
+  <div class="action-bar">
+    <button class="action-btn"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke="currentColor"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>సేవ్</button>
+    <button class="action-btn"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke="currentColor"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>షేర్</button>
+    <button class="action-btn"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke="currentColor"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>వినండి</button>
+    <div class="action-bar-spacer"></div>
+    <button class="subscribe-btn">అభ్యుదే చదవండి</button>
+  </div>
+  <nav class="bottom-nav">
+    <button class="nav-item active"><div class="nav-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><span class="nav-item-label">హోమ్</span></button>
+    <button class="nav-item"><div class="nav-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke="currentColor"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><span class="nav-item-label">అన్వేషించండి</span></button>
+    <button class="nav-item"><div class="nav-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke="currentColor"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div><span class="nav-item-label">సేవ్ చేయబడింది</span></button>
+    <button class="nav-item"><div class="nav-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 0-14.14 0M4.93 19.07a10 10 0 0 0 14.14 0"/></svg></div><span class="nav-item-label">సెట్టింగ్స్</span></button>
+  </nav>
+</div>
+<script>
+  var menuBtn = document.getElementById('menuBtn');
+  var drawer = document.getElementById('drawer');
+  var overlay = document.getElementById('drawerOverlay');
+  function toggleDrawer() { drawer.classList.toggle('open'); overlay.classList.toggle('open'); }
+  menuBtn.addEventListener('click', toggleDrawer);
+  overlay.addEventListener('click', toggleDrawer);
+  document.querySelectorAll('.nav-item').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.nav-item').forEach(function(i) { i.classList.remove('active'); });
+      this.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
